@@ -1,0 +1,171 @@
+name: tracesense-simulation
+
+services:
+  checkout-api:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: checkout-api
+    environment:
+      SERVICE_NAME: checkout-api
+      CART_SERVICE_URL: http://cart-service:8080/process
+    ports:
+      - "8080:8080"
+    depends_on:
+      cart-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  cart-service:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: cart-service
+    environment:
+      SERVICE_NAME: cart-service
+      INVENTORY_SERVICE_URL: http://inventory-service:8080/process
+    depends_on:
+      inventory-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  inventory-service:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: inventory-service
+    environment:
+      SERVICE_NAME: inventory-service
+      PRICING_SERVICE_URL: http://pricing-service:8080/process
+    depends_on:
+      pricing-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pricing-service:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: pricing-service
+    environment:
+      SERVICE_NAME: pricing-service
+      PROMOTION_SERVICE_URL: http://promotion-service:8080/process
+      FAULT_MODE: ${FAULT_MODE:-off}
+      FAULT_SKU: SENSOR-KIT
+    depends_on:
+      promotion-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  promotion-service:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: promotion-service
+    environment:
+      SERVICE_NAME: promotion-service
+      TAX_SERVICE_URL: http://tax-service:8080/process
+    depends_on:
+      tax-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  tax-service:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: tax-service
+    environment:
+      SERVICE_NAME: tax-service
+      RECEIPT_SERVICE_URL: http://receipt-service:8080/process
+    depends_on:
+      receipt-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  receipt-service:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args:
+        SERVICE_DIR: receipt-service
+    environment:
+      SERVICE_NAME: receipt-service
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
