@@ -1,0 +1,8 @@
+incident_id,service,timestamp,anomaly_score,metric
+INC001,pricing-service,2026-09-21T20:02:15,0.91,latency
+INC001,promotion-service,2026-09-21T20:02:16,0.73,latency
+INC001,tax-service,2026-09-21T20:02:17,0.68,latency
+INC001,receipt-service,2026-09-21T20:02:18,0.95,error_rate
+INC002,tax-service,2026-09-21T20:05:31,0.88,latency
+INC002,receipt-service,2026-09-21T20:05:32,0.7,latency
+INC003,inventory-service,2026-09-21T20:10:00,0.85,error_rate

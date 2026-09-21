@@ -1,0 +1,4 @@
+incident_id,root_cause,fault_type,fault_timestamp
+INC001,pricing-service,logic,2026-09-21T20:02:15
+INC002,tax-service,latency,2026-09-21T20:05:31
+INC003,inventory-service,error,2026-09-21T20:10:00
