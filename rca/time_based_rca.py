@@ -1,6 +1,14 @@
 import pandas as pd
 import networkx as nx
 
+import sys
+from pathlib import Path
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from rca.dependency_graph import build_default_graph
+
 # Load anomaly results
 df = pd.read_csv("ml/anomaly_results.csv")
 
@@ -8,19 +16,13 @@ df = pd.read_csv("ml/anomaly_results.csv")
 df["timestamp"] = pd.to_datetime(df["timestamp"])
 
 # Create dependency graph
-G = nx.DiGraph()
-
-G.add_edge("checkout-api", "cart-service")
-
-G.add_edge("cart-service", "inventory-service")
-G.add_edge("cart-service", "pricing-service")
-G.add_edge("cart-service", "promotion-service")
-G.add_edge("cart-service", "tax-service")
-G.add_edge("cart-service", "receipt-service")
-
+G = build_default_graph()
 
 # Get anomalous records
-anomalies = df[df["status"] == "ANOMALY"].copy()
+if "status" in df.columns:
+    anomalies = df[df["status"] == "ANOMALY"].copy()
+else:
+    anomalies = df.copy()
 
 print("\nFirst Anomaly Time")
 print("------------------")
